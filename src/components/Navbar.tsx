@@ -49,7 +49,7 @@ export default function Navbar() {
             <div className="relative">
             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
                 <img 
-                  src="/public/images/gmki_surabaya.png" 
+                  src="/images/gmki_surabaya.png" 
                   alt="Logo GMKI" 
                   className="w-full h-full object-cover"
                 />
