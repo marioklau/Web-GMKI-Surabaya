@@ -131,7 +131,7 @@ https://github.com/marioklau
 ## 📍 Sekretariat GMKI Surabaya
 
 Student Center GMKI Surabaya  
-Jl. Tegalsari No. 62, Surabaya, Jawa Timur. :contentReference[oaicite:1]{index=1}
+Jl. Tegalsari No. 62, Surabaya, Jawa Timur.
 
 ---
 
