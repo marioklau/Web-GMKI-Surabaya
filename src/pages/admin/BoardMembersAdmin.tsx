@@ -9,6 +9,9 @@ interface BoardMember {
   position: string;
   photo_url: string;
   description: string;
+  instagram_url: string;
+  linkedin_url: string;
+  email: string;
   order_position: number;
   is_active: boolean;
 }
@@ -24,6 +27,9 @@ export default function BoardMembersAdmin() {
     position: '',
     photo_url: '',
     description: '',
+    instagram_url: '',
+    linkedin_url: '',
+    email: '',
     order_position: 0,
     is_active: true,
   });
@@ -40,7 +46,7 @@ export default function BoardMembersAdmin() {
       const { data, error: err } = await supabase
         .from('board_members')
         .select('*')
-        .order('order_position');
+        .order('order_position', { ascending: true, nullsFirst: false });
       if (err) throw err;
       setMembers(data || []);
     } catch (err: any) {
@@ -60,7 +66,13 @@ export default function BoardMembersAdmin() {
   };
 
   const handleSave = async () => {
-    if (!formData.name || !formData.position) {
+    const name = formData.name.trim();
+    const position = formData.position.trim();
+    const orderPosition = Number.isFinite(formData.order_position)
+      ? Math.max(1, Math.floor(formData.order_position))
+      : members.length + 1;
+
+    if (!name || !position) {
       setError('Nama dan jabatan harus diisi');
       return;
     }
@@ -72,7 +84,16 @@ export default function BoardMembersAdmin() {
         photoUrl = await uploadPhoto(photoFile);
       }
 
-      const payload = { ...formData, photo_url: photoUrl };
+      const payload = {
+        ...formData,
+        name,
+        position,
+        order_position: orderPosition,
+        photo_url: photoUrl,
+        instagram_url: formData.instagram_url.trim(),
+        linkedin_url: formData.linkedin_url.trim(),
+        email: formData.email.trim(),
+      };
 
       if (editing && editing !== 'new') {
         await supabase.from('board_members').update(payload).eq('id_member', editing);
@@ -85,6 +106,30 @@ export default function BoardMembersAdmin() {
       handleCancel();
       fetchMembers();
       setTimeout(() => setSuccess(''), 3000);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const moveMember = async (member: BoardMember, direction: 'up' | 'down') => {
+    const index = members.findIndex((item) => item.id_member === member.id_member);
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const target = members[targetIndex];
+
+    if (!target) return;
+
+    try {
+      setLoading(true);
+      const updates = [
+        supabase.from('board_members').update({ order_position: target.order_position }).eq('id_member', member.id_member),
+        supabase.from('board_members').update({ order_position: member.order_position }).eq('id_member', target.id_member),
+      ];
+      const results = await Promise.all(updates);
+      const error = results.find((result) => result.error)?.error;
+      if (error) throw error;
+      await fetchMembers();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -120,8 +165,11 @@ export default function BoardMembersAdmin() {
       name: '',
       position: '',
       photo_url: '',
-      description: '',
-      order_position: members.length,
+       description: '',
+       instagram_url: '',
+       linkedin_url: '',
+       email: '',
+       order_position: members.length,
       is_active: true,
     });
     setError('');
@@ -144,9 +192,9 @@ export default function BoardMembersAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="admin-shell">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="admin-header">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Link to="/admin/dashboard" className="p-2 hover:bg-gray-100 rounded-lg">
@@ -237,12 +285,13 @@ export default function BoardMembersAdmin() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Urutan</label>
-                  <input
-                    type="number"
-                    value={formData.order_position}
-                    onChange={(e) => setFormData({ ...formData, order_position: parseInt(e.target.value) })}
-                    className="w-full p-2 border rounded-lg bg-gray-50 focus:bg-white"
-                  />
+<input
+                     type="number"
+                     min="1"
+                     value={formData.order_position}
+                     onChange={(e) => setFormData({ ...formData, order_position: Number(e.target.value) || 1 })}
+                     className="admin-input"
+                   />
                 </div>
                 <div className="flex items-center">
                   <label className="flex items-center gap-2">
@@ -257,8 +306,23 @@ export default function BoardMembersAdmin() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-1">Deskripsi</label>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <div>
+                   <label className="block text-sm font-medium mb-1">Email</label>
+                   <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="admin-input" />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-1">Instagram</label>
+                   <input type="url" value={formData.instagram_url} onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })} className="admin-input" placeholder="https://instagram.com/..." />
+                 </div>
+                 <div>
+                   <label className="block text-sm font-medium mb-1">LinkedIn</label>
+                   <input type="url" value={formData.linkedin_url} onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })} className="admin-input" placeholder="https://linkedin.com/in/..." />
+                 </div>
+               </div>
+
+               <div>
+                 <label className="block text-sm font-medium mb-1">Deskripsi</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -316,6 +380,22 @@ export default function BoardMembersAdmin() {
                         <p className="text-sm text-blue-600">{member.position}</p>
                       </div>
                       <div className="flex gap-1 shrink-0">
+                        <button
+                          onClick={() => moveMember(member, 'up')}
+                          disabled={member === members[0] || loading}
+                          className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                          aria-label={`Naikkan ${member.name}`}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => moveMember(member, 'down')}
+                          disabled={member === members[members.length - 1] || loading}
+                          className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-30"
+                          aria-label={`Turunkan ${member.name}`}
+                        >
+                          ↓
+                        </button>
                         <button
                           onClick={() => handleEdit(member)}
                           className="p-2 hover:bg-gray-100 rounded"

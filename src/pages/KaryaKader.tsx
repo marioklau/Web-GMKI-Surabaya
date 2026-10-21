@@ -59,8 +59,8 @@ export default function KaryaKader() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div className="page-shell">
+      <div className="page-container">
         {/* FILTER */}
         <div className="flex flex-wrap gap-2 mb-8">
           {categories.map((cat) => (
@@ -90,7 +90,7 @@ export default function KaryaKader() {
               <Link
                 key={article.id_article}
                 to={`/karya-kader/${article.id_article}`}
-                className="bg-white rounded-xl shadow-sm hover:shadow-xl transition overflow-hidden group"
+                className="surface-card overflow-hidden group"
               >
                 {article.cover_image_url ? (
                   <img

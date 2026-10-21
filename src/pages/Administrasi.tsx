@@ -70,9 +70,10 @@ export default function Administrasi() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      {/* Filter */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div className="page-shell">
+      <div className="page-container">
+        {/* Filter */}
+        <div className="mb-8">
         <div className="flex flex-wrap gap-2">
           {categories.map((category) => (
             <button
@@ -88,16 +89,16 @@ export default function Administrasi() {
             </button>
           ))}
         </div>
-      </div>
+        </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        {/* Content */}
+        <div className="pb-16">
         {filteredDocuments.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDocuments.map((doc) => (
               <div
                 key={doc.id_document}
-                className="bg-white rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden"
+                className="surface-card overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
@@ -154,6 +155,7 @@ export default function Administrasi() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

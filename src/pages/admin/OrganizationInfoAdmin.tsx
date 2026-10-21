@@ -104,9 +104,9 @@ export default function OrganizationInfoAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="admin-shell">
       {/* Header */}
-      <div className="bg-white border-b sticky top-0 z-10">
+      <div className="admin-header">
         <div className="max-w-5xl mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <button 

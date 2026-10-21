@@ -31,13 +31,13 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow-xl p-8">
+<div className="min-h-screen bg-slate-950 px-4 py-12 flex items-center justify-center">
+       <div className="w-full max-w-md">
+         <div className="admin-card p-8 sm:p-10">
           <div className="flex items-center justify-center mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">G</span>
-            </div>
+<div className="w-14 h-14 rounded-2xl bg-blue-700 flex items-center justify-center shadow-lg shadow-blue-200">
+               <img src="/images/gmki_surabaya.png" alt="Logo GMKI" className="h-11 w-11 object-cover" />
+             </div>
           </div>
 
           <h1 className="text-3xl font-bold text-center text-gray-900 mb-2">Admin GMKI</h1>
@@ -58,7 +58,7 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@gmki.com"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                className="admin-input"
                 disabled={loading}
                 required
               />
@@ -71,7 +71,7 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none"
+                className="admin-input"
                 disabled={loading}
                 required
               />
@@ -80,7 +80,7 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className="admin-button-primary w-full py-3"
             >
               <LogIn size={20} />
               <span>{loading ? 'Sedang masuk...' : 'Masuk'}</span>

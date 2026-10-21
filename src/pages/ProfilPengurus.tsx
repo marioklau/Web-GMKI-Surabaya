@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
-import { User as UserIcon} from 'lucide-react';
+import { Instagram, Linkedin, Mail, User as UserIcon } from 'lucide-react';
 
 // ================= TYPES =================
 interface BoardMember {
@@ -9,15 +9,19 @@ interface BoardMember {
   position: string;
   photo_url: string;
   description: string;
+  instagram_url: string;
+  linkedin_url: string;
+  email: string;
   order_position: number;
 }
 
 // ================= CONSTANTS =================
 const POSITION_CATEGORIES = [
-  { key: 'pimpinan', title: 'Ketua Organisasi', positions: ['Ketua', 'Ketua Umum', 'Wakil Ketua'] },
-  { key: 'sekretariat', title: 'Sekretariat', positions: ['Sekretaris', 'Sekretaris Umum', 'Sekfung'] },
+  { key: 'pimpinan', title: 'Ketua Organisasi', positions: ['Ketua Cabang', 'Ketua', 'Ketua Umum', 'Wakil Ketua'] },
+  { key: 'sekretariat', title: 'Sekretariat', positions: ['Sekretaris', 'Sekretaris Umum'] },
   { key: 'keuangan', title: 'Bendahara', positions: ['Bendahara', 'Bendahara Umum'] },
-  { key: 'bidang', title: 'Ketua Bidang & Fungsional', positions: ['Kabid', 'Kepala Bidang', 'Departemen'] },
+  { key: 'bidang', title: 'Ketua Bidang', positions: ['Ketua Bidang', 'Kabid', 'Kepala Bidang', 'Departemen'] },
+  { key: 'sekretariat-fungsional', title: 'Sekretaris Fungsional', positions: ['Sekfung', 'Sekretaris Fungsional'] },
 ];
 
 // ================= COMPONENTS =================
@@ -54,6 +58,26 @@ const MemberCard = ({ member }: { member: BoardMember }) => (
             "{member.description}"
           </p>
         )}
+
+        {(member.email || member.instagram_url || member.linkedin_url) && (
+          <div className="mt-4 flex items-center justify-center gap-2">
+            {member.email && (
+              <a href={`mailto:${member.email}`} aria-label={`Email ${member.name}`} className="rounded-lg bg-slate-100 p-2 text-slate-500 hover:bg-blue-50 hover:text-blue-600">
+                <Mail size={15} />
+              </a>
+            )}
+            {member.instagram_url && (
+              <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${member.name}`} className="rounded-lg bg-slate-100 p-2 text-slate-500 hover:bg-pink-50 hover:text-pink-600">
+                <Instagram size={15} />
+              </a>
+            )}
+            {member.linkedin_url && (
+              <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" aria-label={`LinkedIn ${member.name}`} className="rounded-lg bg-slate-100 p-2 text-slate-500 hover:bg-blue-50 hover:text-blue-600">
+                <Linkedin size={15} />
+              </a>
+            )}
+          </div>
+        )}
       </div>
     </div>
     
@@ -82,12 +106,25 @@ export default function ProfilPengurus() {
   }, []);
 
   const categorizedData = useMemo(() => {
-    return POSITION_CATEGORIES.map(cat => ({
+    const getCategory = (position: string) => {
+      const value = position.trim().toLowerCase();
+
+      if (value === 'ketua cabang' || value === 'ketua' || value === 'ketua umum' || value === 'wakil ketua') return 'pimpinan';
+      if (value.includes('sekretaris fungsional') || value === 'sekfung') return 'sekretariat-fungsional';
+      if (value.includes('sekretaris')) return 'sekretariat';
+      if (value.includes('bendahara')) return 'keuangan';
+      if (value.includes('ketua bidang') || value.includes('kabid') || value.includes('kepala bidang') || value.includes('departemen')) return 'bidang';
+      return null;
+    };
+
+    const categorized = POSITION_CATEGORIES.map((cat) => ({
       ...cat,
-      data: members.filter(m =>
-        cat.positions.some(p => m.position.toLowerCase().includes(p.toLowerCase()))
-      )
-    })).filter(cat => cat.data.length > 0);
+      data: members
+        .filter((member) => getCategory(member.position) === cat.key)
+        .sort((a, b) => a.order_position - b.order_position),
+    })).filter((cat) => cat.data.length > 0);
+
+    return categorized;
   }, [members]);
 
   if (loading) {
@@ -100,18 +137,7 @@ export default function ProfilPengurus() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] pb-24">
-      {/* Header Section */}
-      <div className="bg-white border-b border-slate-200 mb-8 pt-8">
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
-            Struktur Organisasi
-          </h1>
-          <p className="text-slate-500 max-w-2xl">
-            Sinergi dan kolaborasi dalam menjalankan amanah untuk pencetakan hasil yang maksimal dan akselerasi program kerja.
-          </p>
-        </div>
-      </div>
+    <div className="page-shell">
 
       <div className="max-w-7xl mx-auto px-6">
         {categorizedData.length > 0 ? (

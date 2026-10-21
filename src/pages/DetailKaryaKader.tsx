@@ -51,7 +51,7 @@ export default function DetailKaryaKader() {
   if (!article) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="page-shell">
       {article.cover_image_url && (
         <img
           src={article.cover_image_url}

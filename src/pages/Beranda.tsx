@@ -73,8 +73,9 @@ export default function Beranda() {
             Ut Omnes Unum Sint
           </span>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
-            Selamat Datang di <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">GMKI Surabaya</span>
+            Selamat Datang di 
           </h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-200">Gerakan Mahasiswa Kristen Indonesia Cabang Surabaya</span></h1>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
             Mengabdi untuk Gereja, Perguruan Tinggi, dan Masyarakat. Bersama membangun generasi mahasiswa yang beriman, berintegritas, dan berdampak.
           </p>

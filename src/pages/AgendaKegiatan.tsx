@@ -57,9 +57,10 @@ export default function AgendaKegiatan() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24">
-      {/* Filter */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+    <div className="page-shell">
+      <div className="page-container">
+        {/* Filter */}
+        <div className="mb-8">
         <div className="flex flex-wrap gap-2">
           {[
             { key: 'all', label: 'Semua Kegiatan' },
@@ -80,10 +81,10 @@ export default function AgendaKegiatan() {
             </button>
           ))}
         </div>
-      </div>
+        </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        {/* Content */}
+        <div className="pb-16">
         {filteredEvents.length > 0 ? (
           <div className="space-y-8">
             {filteredEvents.map((event) => {
@@ -92,7 +93,7 @@ export default function AgendaKegiatan() {
               return (
                 <div
                   key={event.id_commissariat}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-lg transition overflow-hidden"
+                  className="surface-card overflow-hidden"
                 >
                   <div className="md:flex">
                     {/* Image */}
@@ -178,21 +179,20 @@ export default function AgendaKegiatan() {
                             ))}
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                       )}
+                     </div>
+                   </div>
+                 </div>
               );
             })}
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-sm py-16 text-center">
             <Clock size={56} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-500">
-              Belum ada kegiatan tersedia
-            </p>
+            <p className="text-gray-500">Belum ada kegiatan tersedia</p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
